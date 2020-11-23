@@ -28,7 +28,7 @@ WORKDIR /home/gleez
 # We need to add openssl to be able to create the certificates on demand
 USER root
 
-RUN apk update 2> /dev/null && apk add --update --no-cache sudo shadow htop git \
+RUN apk add --update --no-cache sudo shadow htop git \
 	nano jq net-tools iputils coreutils curl wget bash untar tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev
 
@@ -101,7 +101,7 @@ ENV PATH=$PATH:$GOPATH/bin
 
 # Set the parameters for the gen-http-proxy
 ENV staticfolder /usr/local/lib/node_modules/gen-http-proxy/static 
-ENV server :$LISTEN_PORT
+ENV server :3080
 ENV target localhost:3000
 ENV secure 0 
 
