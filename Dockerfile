@@ -1,6 +1,6 @@
 ARG NODE_VERSION=12.19.1
 
-FROM node:$NODE_VERSION-alpine3.12 as theia
+FROM node:$NODE_VERSION-alpine as theia
 
 ARG GITHUB_TOKEN
 ARG version=latest
@@ -19,16 +19,16 @@ RUN yarn --pure-lockfile && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM node:$NODE_VERSION-alpine3.12
+FROM node:$NODE_VERSION-alpine
 
 COPY --from=theia /home/gleez /home/gleez
 
 WORKDIR /home/gleez
 
-RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap bind-tools \
-	nano jq net-tools iputils coreutils curl wget vim tar ca-certificates \
+RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
+	bind-tools net-tools iputils coreutils curl wget vim tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which \
-	go icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
+	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
 
 RUN npm install -g gen-http-proxy
 
