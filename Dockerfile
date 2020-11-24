@@ -1,13 +1,14 @@
 ARG NODE_VERSION=12.19.1
-ARG GITHUB_TOKEN
-ARG version=latest
 
 FROM node:$NODE_VERSION-alpine3.12 as theia
-RUN apk add --no-cache make pkgconfig gcc g++ python libx11-dev libxkbfile-dev
+RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev
 
+ARG version=latest
 WORKDIR /home/gleez
 
 ADD $version.package.json ./package.json
+ARG GITHUB_TOKEN
+
 RUN yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
     yarn theia download:plugins && \
@@ -24,7 +25,7 @@ WORKDIR /home/gleez
 
 RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
 	bind-tools net-tools iputils coreutils curl wget vim tar ca-certificates \
-	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which \
+	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which python3 \
 	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
@@ -39,8 +40,6 @@ RUN chmod g+rw /home && \
     mkdir -p /usr/local/go-packages && \
     chown -R gleez:gleez /home/gleez && \
     chown -R gleez:gleez /home/project && \
-    # chown -R gleez:gleez /home/go && \
-    # chown -R gleez:gleez /home/go-tools && \
 		addgroup -g 10000 node && \
 		adduser -u 10000 -G node -s /bin/sh -D node;
 
