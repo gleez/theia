@@ -1,6 +1,6 @@
 ARG NODE_VERSION=12.19.1
 
-FROM node:$NODE_VERSION as theia
+FROM node:$NODE_VERSION-alpine3.12 as theia
 
 ARG GITHUB_TOKEN
 ARG version=latest
@@ -19,36 +19,37 @@ RUN yarn --pure-lockfile && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM node:$NODE_VERSION-alpine
+FROM node:$NODE_VERSION-alpine3.12
 
 COPY --from=theia /home/gleez /home/gleez
 
 WORKDIR /home/gleez
 
-RUN apk add --update --no-cache sudo shadow htop git openssh bash \
-	nano jq net-tools iputils coreutils curl wget bash tar ca-certificates \
-	openssl protoc libprotoc libprotobuf protobuf-dev unzip \
-	openssl1.0 icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop
+RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap bind-tools \
+	nano jq net-tools iputils coreutils curl wget vim tar ca-certificates \
+	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which \
+	icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
 
 RUN npm install -g gen-http-proxy
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
 RUN deluser node && \
 		addgroup -g 1000 gleez && \
-		adduser -u 1000 -G gleez -s /bin/sh -D gleez && \
-		echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    chmod g+rw /home && \
+		adduser -D -S -u 1000 -G gleez -h /home/gleez -s /bin/sh gleez && \
+		echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
+		
+RUN chmod g+rw /home && \
     mkdir -p /home/project && \
-    mkdir -p /home/go && \
-    mkdir -p /home/go-tools && \
+    mkdir -p /usr/local/go && \
+    mkdir -p /usr/local/go-packages && \
     chown -R gleez:gleez /home/gleez && \
     chown -R gleez:gleez /home/project && \
-    chown -R gleez:gleez /home/go && \
-    chown -R gleez:gleez /home/go-tools && \
+    # chown -R gleez:gleez /home/go && \
+    # chown -R gleez:gleez /home/go-tools && \
 		addgroup -g 10000 node && \
 		adduser -u 10000 -G node -s /bin/sh -D node;
 
-USER gleez
+# USER gleez
 
 ## GO
 ENV GO_VERSION=1.15 \
@@ -91,6 +92,8 @@ RUN go get -u -v github.com/mdempsky/gocode && \
 RUN go get -u -v -d github.com/stamblerre/gocode && \
     go build -o $GOPATH/bin/gocode-gomod github.com/stamblerre/gocode
 
+USER gleez
+
 # Add our script
 ADD ssl_theia.sh /home/gleez/ssl/
 
@@ -98,7 +101,10 @@ ADD ssl_theia.sh /home/gleez/ssl/
 ENV SHELL=/bin/bash \
     THEIA_DEFAULT_PLUGINS=local-dir:/home/gleez/plugins  \
     # Configure user Go path
-    GOPATH=/home/project
+    GOPATH=/home/project \
+		HOME=/home/gleez \
+		USE_LOCAL_GIT true
+		
 ENV PATH=$PATH:$GOPATH/bin
 
 # Set the parameters for the gen-http-proxy
