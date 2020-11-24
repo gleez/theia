@@ -1,9 +1,9 @@
 ARG NODE_VERSION=12.19.1
-
-FROM node:$NODE_VERSION-alpine as theia
-
 ARG GITHUB_TOKEN
 ARG version=latest
+
+FROM node:$NODE_VERSION-alpine3.12 as theia
+RUN apk add --no-cache make pkgconfig gcc g++ python libx11-dev libxkbfile-dev
 
 WORKDIR /home/gleez
 
@@ -19,18 +19,13 @@ RUN yarn --pure-lockfile && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM node:$NODE_VERSION-alpine
-
-COPY --from=theia /home/gleez /home/gleez
-
+FROM node:$NODE_VERSION-alpine3.12
 WORKDIR /home/gleez
 
 RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
 	bind-tools net-tools iputils coreutils curl wget vim tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which \
 	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
-
-RUN npm install -g gen-http-proxy
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
 RUN deluser node && \
@@ -48,6 +43,9 @@ RUN chmod g+rw /home && \
     # chown -R gleez:gleez /home/go-tools && \
 		addgroup -g 10000 node && \
 		adduser -u 10000 -G node -s /bin/sh -D node;
+
+COPY --from=theia --chown=gleez:gleez /home/gleez /home/gleez
+RUN npm install -g gen-http-proxy
 
 # ## GO
 # ENV GO_VERSION=1.15 \
