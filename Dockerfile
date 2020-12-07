@@ -31,8 +31,9 @@ RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
 # See: https://github.com/theia-ide/theia-apps/issues/34
 RUN deluser node && \
 		addgroup -g 1000 gleez && \
-		adduser -D -S -u 1000 -G gleez -h /home/gleez -s /bin/sh gleez && \
-		echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
+		adduser -D -S -u 1000 -G gleez -G wheel -h /home/gleez -s /bin/bash gleez && \
+		echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+		echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers;
 		
 RUN chmod g+rw /home && \
     mkdir -p /home/project && \
@@ -45,6 +46,7 @@ RUN chmod g+rw /home && \
 
 COPY --from=theia --chown=gleez:gleez /home/gleez /home/gleez
 RUN npm install -g gen-http-proxy
+RUN npm install -g @nestjs/cli
 
 # ## GO
 # ENV GO_VERSION=1.15 \
@@ -102,6 +104,11 @@ ENV SHELL=/bin/bash \
 		
 ENV PATH=$PATH:$GOPATH/bin
 
+## Setup misc
+RUN git config --global user.email "info@gleeztech.com" \
+ && git config --global user.name "Gleez Technologies" \
+ && touch ~/.sudo_as_admin_successful
+ 
 # Set the parameters for the gen-http-proxy
 ENV staticfolder /usr/local/lib/node_modules/gen-http-proxy/static 
 ENV server :3080
