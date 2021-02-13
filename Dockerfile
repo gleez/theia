@@ -24,9 +24,14 @@ FROM node:$NODE_VERSION-alpine3.12
 WORKDIR /home/gleez
 
 RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
-	bind-tools net-tools iputils coreutils curl wget vim tar ca-certificates \
+	bind-tools net-tools iputils coreutils curl wget nano vim tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which python3 \
 	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
+	&& echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
+ 	&& echo http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
+	&& echo http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+ 	&& apk --no-cache add watchman py3-boto3 py3-boto aws-cli \
+ 	&& rm -rf /var/cache/apk/*
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
 RUN deluser node && \
@@ -47,6 +52,9 @@ RUN chmod g+rw /home && \
 COPY --from=theia --chown=gleez:gleez /home/gleez /home/gleez
 RUN npm install -g gen-http-proxy
 RUN npm install -g @nestjs/cli
+
+RUN mkdir -p /var/run/watchman/gleez-state \
+ && chown -R gleez:gleez /var/run/watchman/gleez-state
 
 # ## GO
 # ENV GO_VERSION=1.15 \
