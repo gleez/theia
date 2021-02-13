@@ -26,7 +26,7 @@ WORKDIR /home/gleez
 RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
 	bind-tools net-tools iputils coreutils curl wget nano vim tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which python3 \
-	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect
+	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect \
 	&& echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
  	&& echo http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
 	&& echo http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
