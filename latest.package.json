@@ -3,7 +3,7 @@
     "theia": {
         "frontend": {
             "config": {
-                "applicationName": "Theia Go Example",
+                "applicationName": "Gleez Theia",
                 "preferences": {
                     "files.enableTrash": false
                 }
