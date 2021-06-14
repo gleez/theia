@@ -28,8 +28,7 @@
         "@theia/task": "latest",
         "@theia/terminal": "latest",
         "@theia/userstorage": "latest",
-        "@theia/vsx-registry": "latest",
-        "theia-middleware": "^0.1.4"
+        "@theia/vsx-registry": "latest"
     },
     "devDependencies": {
         "@theia/cli": "latest",
