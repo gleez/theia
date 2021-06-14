@@ -52,7 +52,7 @@ RUN chmod g+rw /home && \
 		adduser -u 10000 -G node -s /bin/sh -D node;
 
 COPY --from=theia --chown=gleez:gleez /home/gleez /home/gleez
-RUN npm install -g gen-http-proxy
+# RUN npm install -g gen-http-proxy
 RUN npm install -g @nestjs/cli
 
 RUN mkdir -p /var/run/watchman/gleez-state \
@@ -102,7 +102,7 @@ RUN mkdir -p /var/run/watchman/gleez-state \
 USER gleez
 
 # Add our script
-ADD ssl_theia.sh /home/gleez/ssl/
+# ADD ssl_theia.sh /home/gleez/ssl/
 
 # Configure Theia
 ENV SHELL=/bin/bash \
@@ -130,4 +130,3 @@ EXPOSE 3000
 
 # Run theia and accept theia parameters
 ENTRYPOINT [ "node", "/home/gleez/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0" ]
-# ENTRYPOINT [ "/home/gleez/ssl/ssl_theia.sh" ]
