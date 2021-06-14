@@ -27,6 +27,8 @@ RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
 	bind-tools net-tools iputils coreutils curl wget nano vim tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which python3 \
 	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect \
+  mysql-client mariadb-client net-tools iputils openssh-client openssh-server \
+  protoc libprotoc libprotobuf protobuf-dev inotify-tools \
 	&& echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
  	&& echo http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
 	&& echo http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
@@ -113,18 +115,19 @@ ENV SHELL=/bin/bash \
 ENV PATH=$PATH:$GOPATH/bin
 
 ## Setup misc
-RUN git config --global user.email "info@gleeztech.com" \
+RUN git config --global user.email "hello@gleeztech.com" \
  && git config --global user.name "Gleez Technologies" \
  && touch ~/.sudo_as_admin_successful
  
 # Set the parameters for the gen-http-proxy
-ENV staticfolder /usr/local/lib/node_modules/gen-http-proxy/static 
-ENV server :3080
-ENV target localhost:3000
-ENV secure 0 
+# ENV staticfolder /usr/local/lib/node_modules/gen-http-proxy/static 
+# ENV server :3080
+# ENV target localhost:3000
+# ENV secure 0 
 
-EXPOSE 3080
+# EXPOSE 3080
+EXPOSE 3000
 
 # Run theia and accept theia parameters
-# ENTRYPOINT [ "node", "/home/gleez/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0" ]
-ENTRYPOINT [ "/home/gleez/ssl/ssl_theia.sh" ]
+ENTRYPOINT [ "node", "/home/gleez/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0" ]
+# ENTRYPOINT [ "/home/gleez/ssl/ssl_theia.sh" ]

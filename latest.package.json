@@ -3,9 +3,10 @@
     "theia": {
         "frontend": {
             "config": {
-                "applicationName": "Gleez Theia",
+                "applicationName": "Gleez IDE",
                 "preferences": {
-                    "files.enableTrash": false
+                    "files.enableTrash": false,
+                    "php.suggest.basic": false
                 }
             }
         }
@@ -13,6 +14,7 @@
     "dependencies": {
         "@theia/editor-preview": "latest",
         "@theia/file-search": "latest",
+        "@theia/filesystem": "latest",
         "@theia/getting-started": "latest",
         "@theia/git": "latest",
         "@theia/markers": "latest",
@@ -23,12 +25,18 @@
         "@theia/preferences": "latest",
         "@theia/preview": "latest",
         "@theia/search-in-workspace": "latest",
+        "@theia/task": "latest",
         "@theia/terminal": "latest",
-        "@theia/vsx-registry": "latest"
+        "@theia/userstorage": "latest",
+        "@theia/vsx-registry": "latest",
+        "theia-middleware": "^0.1.4"
     },
     "devDependencies": {
         "@theia/cli": "latest",
         "@theia/debug": "latest"
+    },
+    "scripts": {
+        "preinstall": "node-gyp install"
     },
     "theiaPluginsDir": "plugins",
     "theiaPlugins": {
