@@ -1,7 +1,7 @@
 ARG NODE_VERSION=12-alpine3.12
 
 FROM node:$NODE_VERSION as theia
-RUN apk add --no-cache make pkgconfig gcc g++ go bash python3 libx11-dev libxkbfile-dev gnupg musl-dev openssl
+RUN apk add --no-cache make pkgconfig gcc g++ bash python3 libx11-dev libxkbfile-dev gnupg musl-dev openssl
 
 ARG version=latest
 WORKDIR /home/gleez
@@ -32,7 +32,7 @@ RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap xz gpgm
 	&& echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
  	&& echo http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
 	&& echo http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
- 	&& apk --no-cache add watchman py3-boto3 py3-boto aws-cli kubectl helm \
+ 	&& apk --no-cache add watchman py3-boto3 py3-boto aws-cli kubectl helm go \
  	&& rm -rf /var/cache/apk/*
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
@@ -60,13 +60,13 @@ RUN npm install -g @nestjs/cli
 RUN mkdir -p /var/run/watchman/gleez-state \
     && chown -R gleez:gleez /var/run/watchman/gleez-state
 
-## GO
-ENV GO_VERSION=1.15 \
-    GOOS=linux \
-    GOARCH=amd64 \
-    GOROOT=/usr/local/go \
-    GOPATH=/usr/local/go-packages
-ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+# ## GO
+# ENV GO_VERSION=1.15 \
+#     GOOS=linux \
+#     GOARCH=amd64 \
+#     GOROOT=/usr/local/go \
+#     GOPATH=/usr/local/go-packages
+# ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install Go
 # RUN curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C /usr/local -xzv
@@ -101,7 +101,7 @@ RUN go get -u -v github.com/mdempsky/gocode && \
 RUN go get -u -v -d github.com/stamblerre/gocode && \
     go build -o $GOPATH/bin/gocode-gomod github.com/stamblerre/gocode
 
-ENV PATH=$PATH:$GOPATH/bin
+# ENV PATH=$PATH:$GOPATH/bin
 
 RUN chmod g+rw /home && \
     mkdir -p /home/project && \
