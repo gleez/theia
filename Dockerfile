@@ -122,7 +122,7 @@ ENV SHELL=/bin/bash \
     GOPATH=/home/project \
 	HOME=/home/gleez \
 	USE_LOCAL_GIT=true
-ENV PATH=$PATH:$GOPATH/bin
+# ENV PATH=$PATH:$GOPATH/bin
 
 ## Setup misc
 RUN git config --global user.email "hello@gleeztech.com" \
