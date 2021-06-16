@@ -3,7 +3,7 @@ ARG NODE_VERSION=12-alpine3.12
 FROM node:$NODE_VERSION as theia
 RUN apk add --no-cache make pkgconfig gcc g++ bash python3 libx11-dev libxkbfile-dev gnupg musl-dev openssl
 
-ARG version=latest
+ARG version=next
 WORKDIR /home/gleez
 
 ADD $version.package.json ./package.json
