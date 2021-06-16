@@ -5,8 +5,7 @@
             "config": {
                 "applicationName": "Gleez IDE",
                 "preferences": {
-                    "files.enableTrash": false,
-                    "php.suggest.basic": false
+                    "files.enableTrash": false
                 }
             }
         }
@@ -28,8 +27,7 @@
         "@theia/task": "latest",
         "@theia/terminal": "latest",
         "@theia/userstorage": "latest",
-        "@theia/vsx-registry": "latest",
-        "theia-middleware": "^0.1.4"
+        "@theia/vsx-registry": "latest"
     },
     "devDependencies": {
         "@theia/cli": "latest",
