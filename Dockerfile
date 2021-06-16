@@ -48,6 +48,7 @@ RUN chmod g+rw /home && \
 
 COPY --from=theia --chown=gleez:gleez /home/gleez /home/gleez
 RUN npm install -g gen-http-proxy
+RUN npm install -g serve
 RUN npm install -g @nestjs/cli
 
 RUN mkdir -p /var/run/watchman/gleez-state \
