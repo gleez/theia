@@ -1,7 +1,7 @@
 ARG NODE_VERSION=12.19.1
 
 FROM node:$NODE_VERSION-alpine3.12 as theia
-RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev
+RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev gnupg
 
 ARG version=latest
 WORKDIR /home/gleez
@@ -23,12 +23,12 @@ RUN yarn --pure-lockfile && \
 FROM node:$NODE_VERSION-alpine3.12
 WORKDIR /home/gleez
 
-RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
+RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap xz gpgme\
 	bind-tools net-tools iputils coreutils curl wget nano vim tar ca-certificates \
 	openssl protoc libprotoc libprotobuf protobuf-dev unzip bzip2 which python3 \
 	nano jq icu krb5 zlib libsecret gnome-keyring desktop-file-utils xprop expect \
-  mysql-client mariadb-client net-tools iputils openssh-client openssh-server \
-  protoc libprotoc libprotobuf protobuf-dev inotify-tools \
+    mysql-client mariadb-client net-tools iputils openssh-client openssh-server \
+    protoc libprotoc libprotobuf protobuf-dev inotify-tools \
 	&& echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
  	&& echo http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
 	&& echo http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
@@ -37,38 +37,41 @@ RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap \
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
 RUN deluser node && \
-		addgroup -g 1000 gleez && \
-		adduser -D -S -u 1000 -G gleez -G wheel -h /home/gleez -s /bin/bash gleez && \
-		echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-		echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers;
+	addgroup -g 1000 gleez && \
+	adduser -D -S -u 1000 -G gleez -G wheel -h /home/gleez -s /bin/bash gleez && \
+	echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+	echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers;
 
 RUN chmod g+rw /home && \
     mkdir -p /home/project && \
-    mkdir -p /home/go && \
-    mkdir -p /home/go-tools && \
-    chown -R gleez:gleez /home/gleez && \
+    mkdir -p /home/gleez/.pub-cache/bin && \
+    mkdir -p /usr/local/cargo && \
+    mkdir -p /usr/local/go && \
+    mkdir -p /usr/local/go-packages && \
     chown -R gleez:gleez /home/project && \
-    chown -R gleez:gleez /home/go && \
-    chown -R gleez:gleez /home/go-tools && \
-		addgroup -g 10000 node && \
-		adduser -u 10000 -G node -s /bin/sh -D node;
+    chown -R gleez:gleez /home/gleez/.pub-cache/bin && \
+    chown -R gleez:gleez /usr/local/cargo && \
+    chown -R gleez:gleez /usr/local/go && \
+    chown -R gleez:gleez /usr/local/go-packages && \
+	addgroup -g 10000 node && \
+	adduser -u 10000 -G node -s /bin/sh -D node;
 
 COPY --from=theia --chown=gleez:gleez /home/gleez /home/gleez
-# RUN npm install -g gen-http-proxy
 RUN npm install -g @nestjs/cli
 
 RUN mkdir -p /var/run/watchman/gleez-state \
- && chown -R gleez:gleez /var/run/watchman/gleez-state
+    && chown -R gleez:gleez /var/run/watchman/gleez-state
 
+## GO
 ENV GO_VERSION=1.15 \
     GOOS=linux \
     GOARCH=amd64 \
-    GOROOT=/home/go \
-    GOPATH=/home/go-tools
+    GOROOT=/usr/local/go \
+    GOPATH=/usr/local/go-packages
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install Go
-RUN curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C /home -xzv
+RUN curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C /usr/local -xzv
 
 # Install VS Code Go tools: https://github.com/Microsoft/vscode-go/blob/058eccf17f1b0eebd607581591828531d768b98e/src/goInstallTools.ts#L19-L45
 RUN go get -u -v github.com/mdempsky/gocode && \
@@ -100,6 +103,19 @@ RUN go get -u -v github.com/mdempsky/gocode && \
 RUN go get -u -v -d github.com/stamblerre/gocode && \
     go build -o $GOPATH/bin/gocode-gomod github.com/stamblerre/gocode
 
+ENV PATH=$PATH:$GOPATH/bin
+
+RUN chmod g+rw /home && \
+    mkdir -p /home/project && \
+    mkdir -p /home/gleez/.pub-cache/bin && \
+    mkdir -p /usr/local/go && \
+    mkdir -p /usr/local/go-packages && \
+    chown -R gleez:gleez /home/project && \
+    chown -R gleez:gleez /home/gleez/.pub-cache/bin && \
+    chown -R gleez:gleez /usr/local/cargo && \
+    chown -R gleez:gleez /usr/local/go && \
+    chown -R gleez:gleez /usr/local/go-packages
+
 USER gleez
 
 # Configure Theia
@@ -107,8 +123,8 @@ ENV SHELL=/bin/bash \
     THEIA_DEFAULT_PLUGINS=local-dir:/home/gleez/plugins  \
     # Configure user Go path
     GOPATH=/home/project \
-		HOME=/home/gleez \
-		USE_LOCAL_GIT=true
+	HOME=/home/gleez \
+	USE_LOCAL_GIT=true
 ENV PATH=$PATH:$GOPATH/bin
 
 ## Setup misc
