@@ -1,7 +1,7 @@
-ARG NODE_VERSION=12.19.1
+ARG NODE_VERSION=lts-alpine3.13
 
-FROM node:$NODE_VERSION-alpine3.12 as theia
-RUN apk add --no-cache make pkgconfig gcc g++ python3 libx11-dev libxkbfile-dev gnupg
+FROM node:$NODE_VERSION as theia
+RUN apk add --no-cache make pkgconfig gcc g++ go bash python3 libx11-dev libxkbfile-dev gnupg musl-dev openssl
 
 ARG version=latest
 WORKDIR /home/gleez
@@ -20,7 +20,7 @@ RUN yarn --pure-lockfile && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM node:$NODE_VERSION-alpine3.12
+FROM node:$NODE_VERSION
 WORKDIR /home/gleez
 
 RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap xz gpgme\
@@ -69,7 +69,7 @@ ENV GO_VERSION=1.15 \
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install Go
-RUN curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C /usr/local -xzv
+# RUN curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C /usr/local -xzv
 
 # Install VS Code Go tools: https://github.com/Microsoft/vscode-go/blob/058eccf17f1b0eebd607581591828531d768b98e/src/goInstallTools.ts#L19-L45
 RUN go get -u -v github.com/mdempsky/gocode && \
