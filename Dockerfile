@@ -32,7 +32,7 @@ RUN apk add --update --no-cache sudo shadow htop git openssh bash libcap xz gpgm
 	&& echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
  	&& echo http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
 	&& echo http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
- 	&& apk --no-cache add watchman py3-boto3 py3-boto aws-cli \
+ 	&& apk --no-cache add watchman py3-boto3 py3-boto aws-cli kubectl helm \
  	&& rm -rf /var/cache/apk/*
 
 # See: https://github.com/theia-ide/theia-apps/issues/34
@@ -43,16 +43,14 @@ RUN deluser node && \
 	echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers;
 
 RUN chmod g+rw /home && \
-    mkdir -p /home/project && \
-    mkdir -p /home/gleez/.pub-cache/bin && \
-    mkdir -p /usr/local/cargo && \
-    mkdir -p /usr/local/go && \
-    mkdir -p /usr/local/go-packages && \
-    chown -R gleez:gleez /home/project && \
-    chown -R gleez:gleez /home/gleez/.pub-cache/bin && \
-    chown -R gleez:gleez /usr/local/cargo && \
-    chown -R gleez:gleez /usr/local/go && \
-    chown -R gleez:gleez /usr/local/go-packages && \
+    # mkdir -p /home/project && \
+    # mkdir -p /home/gleez/.pub-cache/bin && \
+    # mkdir -p /usr/local/go && \
+    # mkdir -p /usr/local/go-packages && \
+    # chown -R gleez:gleez /home/project && \
+    # chown -R gleez:gleez /home/gleez/.pub-cache/bin && \
+    # chown -R gleez:gleez /usr/local/go && \
+    # chown -R gleez:gleez /usr/local/go-packages && \
 	addgroup -g 10000 node && \
 	adduser -u 10000 -G node -s /bin/sh -D node;
 
@@ -112,7 +110,6 @@ RUN chmod g+rw /home && \
     mkdir -p /usr/local/go-packages && \
     chown -R gleez:gleez /home/project && \
     chown -R gleez:gleez /home/gleez/.pub-cache/bin && \
-    chown -R gleez:gleez /usr/local/cargo && \
     chown -R gleez:gleez /usr/local/go && \
     chown -R gleez:gleez /usr/local/go-packages
 
