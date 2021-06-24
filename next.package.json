@@ -69,7 +69,6 @@
         "vscode-builtin-emmet": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/emmet-1.39.1-prel.vsix",
         "vscode-builtin-fsharp": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/fsharp-1.39.1-prel.vsix",
         "vscode-builtin-go": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/go-1.39.1-prel.vsix",
-        "vscode-builtin-groovy": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/groovy-1.39.1-prel.vsix",
         "vscode-builtin-grunt": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/grunt-1.39.1-prel.vsix",
         "vscode-builtin-gulp": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/gulp-1.39.1-prel.vsix",
         "vscode-builtin-handlebars": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/handlebars-1.39.1-prel.vsix",
